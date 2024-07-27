@@ -8,7 +8,7 @@ const router = express.Router();
 
 // Sign Up
 router.post('/signup', async (req, res) => {
-    const { email, password, firstName, LastName } = req.body;
+    const { email, password, firstName, lastName } = req.body;
   
     try {
       // Check if the user already exists
@@ -26,7 +26,7 @@ router.post('/signup', async (req, res) => {
         email,
         password: hashedPassword,
         firstName,
-        LastName
+        lastName
       });
   
       await user.save();
@@ -44,28 +44,30 @@ router.post('/signup', async (req, res) => {
 
 // Sign In
 router.post('/signin', async (req, res) => {
-  const { email, password } = req.body;
+    const { email, password } = req.body;
 
-  try {
-    // Check if the user exists
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ msg: 'Invalid credentials' });
+    try {
+        // Find user
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).json({ message: 'Invalid credentials' });
+        }
+
+        // Check password
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Invalid credentials' });
+        }
+
+        // Generate a token
+        const payload = { userId: user.id };
+        const token = jwt.sign(payload, process.env.JWT_SCRET, { expiresIn: '1h' });
+
+        res.json({ token }); // Send token or any other response
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
     }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ msg: 'Invalid credentials' });
-    }
-
-    const payload = { userId: user.id };
-    const token = jwt.sign(payload, process.env.JWT_SCRET, { expiresIn: '1h' });
-
-    res.json({ token });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
-  }
 });
 
 module.exports = router;

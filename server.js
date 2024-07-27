@@ -3,17 +3,23 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors'); 
 require('dotenv').config();
-const DB = process.env.db
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // Middleware
 app.use(bodyParser.json());
-app.use(cors()); 
+app.options('*', cors());
+
+app.use(cors({
+  origin: 'http://localhost:5173', // Replace with your frontend's origin
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true, // Allow cookies to be sent
+  optionsSuccessStatus: 204
+})); 
 
 // Connect to MongoDB
-mongoose.connect(DB, {
+mongoose.connect(process.env.db, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
