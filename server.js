@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 app.options('*', cors());
 
 app.use(cors({
-  origin: 'http://localhost:5173', // Replace with your frontend's origin
+  origin: ['http://localhost:5173', 'https://backend-y3t0.onrender.com'], // Replace with your frontend's origin
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true, // Allow cookies to be sent
   optionsSuccessStatus: 204
