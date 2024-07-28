@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 app.options('*', cors());
 
 
-const allowedOrigins =  ['http://localhost:5173' ,'https://my-project-delta-three.vercel.app/', 'https://backend-y3t0.onrender.com'];
+const allowedOrigins =  ['http://localhost:5173' ,'https://my-project-delta-three.vercel.app', 'https://backend-y3t0.onrender.com'];
 
 app.use(cors({
   origin: function (origin, callback) {
