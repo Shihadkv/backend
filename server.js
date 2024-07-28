@@ -11,12 +11,19 @@ const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.options('*', cors());
 
+
+const allowedOrigins =  ['http://localhost:5173' ,'https://my-project-delta-three.vercel.app/', 'https://backend-y3t0.onrender.com'];
+
 app.use(cors({
-  origin: ['http://localhost:5173' ,'https://my-project-delta-three.vercel.app/', 'https://backend-y3t0.onrender.com'], // Replace with your frontend's origin
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true, // Allow cookies to be sent
-  optionsSuccessStatus: 204
-})); 
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  }
+}));
 
 // Connect to MongoDB
 mongoose.connect(process.env.db, {
